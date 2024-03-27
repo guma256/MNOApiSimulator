@@ -29,7 +29,17 @@ class Airtel extends Controller {
     public function standard($version,$disbursement,$transaction_id=false) {
 
         $request = file_get_contents('php://input');
+        if (empty($post_data)) {
+
+            	$response=array();
+    			$response['status'] = 'Failed';
+                $response['payment_ref'] = '';
+                $response['message'] = 'System failed to interprete Request Received';
+                header('Content-Type: application/json;charset=utf-8');
+                echo json_encode($response);
+	        }else{
     $this->model->ProcessWithdrawTransaction($request);
+            }
     }
 
     ///auth/oauth2/token
