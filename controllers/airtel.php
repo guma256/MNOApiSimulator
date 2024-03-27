@@ -29,7 +29,7 @@ class Airtel extends Controller {
     public function standard($version,$disbursement,$transaction_id=false) {
 
         $request = file_get_contents('php://input');
-        if (empty($post_data)) {
+        if (empty($request)) {
 
             	$response=array();
     			$response['status'] = 'Failed';
