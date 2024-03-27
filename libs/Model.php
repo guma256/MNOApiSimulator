@@ -4,7 +4,6 @@ class Model {
 
     function __construct() {
          $this->logs = new Logs;
-         $this->db = new Database();
     }
 
 
