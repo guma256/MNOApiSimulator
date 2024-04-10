@@ -27,7 +27,7 @@ class Airtel extends Controller {
 
    // /standard/v1/disbursements/
     public function standard($version,$disbursement,$transaction_id=false) {
-
+         if($transaction_id==false){
         $request = file_get_contents('php://input');
         if (empty($request)) {
 
@@ -40,6 +40,10 @@ class Airtel extends Controller {
 	        }else{
     $this->model->ProcessWithdrawTransaction($request);
             }
+
+        }else{
+            $this->model->ProcessStatusRequest($disbursement,$transaction_id);
+        }
     }
 
     ///auth/oauth2/token

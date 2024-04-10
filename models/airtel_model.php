@@ -26,8 +26,56 @@ class Airtel_Model extends Model {
 
 	}
 
-	function ProcessStatus($reference){
+	function ProcessStatusRequest($operation,$transaction_id){
+     
+    $req_data = json_decode($data,true);
+    $AM_id = mt_rand(1, 100000);
+    //print_r($data);die();
+    if($operation=='disbursements'){
+    $response = array (
+        'data' => 
+        array (
+          'transaction' => 
+          array (
+            'id' =>  $transaction_id,
+            'message' => 'Your Request is submitted Successfully',
+            'status' => 'TF',
+          ),
+        ),
+        'status' => 
+        array (
+          'response_code' => 'DP00900001001',
+          'code' => '200',
+          'success' => true,
+          'result_code' => 'ESB000010',
+          'message' =>  'SUCCESS',
+        ),
+    );
+  }else{
+    $response = array (
+      'data' => 
+      array (
+        'transaction' => 
+        array (
+          'airtel_money_id' => 'AM-'.$AM_id,
+          'id' => $transaction_id,
+          'message' =>'success',
+          'status' => 'TS',
+        ),
+      ),
+      'status' => 
+      array (
+        'response_code' => 'DP00900001001',
+        'code' => '200',
+        'success' => true,
+        'result_code' => 'ESB000010',
+        'message' => 'SUCCESS',
+      ),
+  );
 
+  }
+  header('Content-Type: application/json;charset=utf-8');
+    echo json_encode($response);
 	}
 
 
