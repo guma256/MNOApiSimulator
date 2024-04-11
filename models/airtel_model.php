@@ -28,9 +28,13 @@ class Airtel_Model extends Model {
 
 	function ProcessStatusRequest($operation,$transaction_id){
      
+    $statuses=array("0"=>"TS","1"=>"TF","2"=>"TA","3"=>"TIP");
+    $message=array("0"=>"Your Request is submitted Successfully","1"=>"Transaction failed","2"=>"Ambiguous transaction","3"=>"Transaction in Progress");
+
+    $key = array_rand($statuses,1);
     $req_data = json_decode($data,true);
     $AM_id = mt_rand(1, 100000);
-    //print_r($data);die();
+    //print_r($key);die();
     if($operation=='disbursements'){
     $response = array (
         'data' => 
@@ -38,8 +42,8 @@ class Airtel_Model extends Model {
           'transaction' => 
           array (
             'id' =>  $transaction_id,
-            'message' => 'Your Request is submitted Successfully',
-            'status' => 'TF',
+            'message' => $message[$key],
+            'status' => $statuses[$key],
           ),
         ),
         'status' => 
@@ -52,6 +56,9 @@ class Airtel_Model extends Model {
         ),
     );
   }else{
+
+    $message=array("0"=>"Success","1"=>"Transaction failed","2"=>"Ambiguous transaction","3"=>"Transaction in Progress");
+
     $response = array (
       'data' => 
       array (
@@ -59,8 +66,8 @@ class Airtel_Model extends Model {
         array (
           'airtel_money_id' => 'AM-'.$AM_id,
           'id' => $transaction_id,
-          'message' =>'success',
-          'status' => 'TS',
+          'message' =>$message[$key],
+          'status' => $statuses[$key],
         ),
       ),
       'status' => 
@@ -92,19 +99,33 @@ class Airtel_Model extends Model {
 
 
   function ProcessWithdrawTransaction($data){
-
+    
+    $statuses=array("0"=>"TS","1"=>"TF","2"=>"TA","3"=>"TIP");
+    $message=array("0"=>"Your Request is submitted Successfully","1"=>"Transaction failed","2"=>"Ambiguous transaction","3"=>"Transaction in Progress");
+    $key = array_rand($statuses,1);
     $req_data = json_decode($data,true);
     $transaction_id = mt_rand(1, 100000);
     //print_r($data);die();
+        if($statuses[$key]=='TS'){
+          $airtel_money_id = 'disburs-'.$this->generateRandomString().'-'.$req_data['transaction']['id'];
+        }else if ($statuses[$key]=='TA'){
+          $transaction_id = 'null';
+          $airtel_money_id = 'null';
+        }else if($statuses[$key]=='TIP'){
+          $transaction_id = 'null';
+          $airtel_money_id = 'null';
+        }else{
+
+        }
     $response = array (
         'data' => 
         array (
           'transaction' => 
           array (
             'reference_id' =>  $transaction_id,
-            'airtel_money_id' => 'disburs-'.$this->generateRandomString().'-'.$req_data['transaction']['id'],
+            'airtel_money_id' => $airtel_money_id,
             'id' => $req_data['transaction']['id'],
-            'status' => 'TS',
+            'status' => $statuses[$key],
           ),
         ),
         'status' => 
@@ -113,7 +134,7 @@ class Airtel_Model extends Model {
           'code' => '200',
           'success' => true,
           'result_code' => 'ESB000010',
-          'message' =>  $transaction_id.'. Ksh 63.00 deposited to BG Test 010190 on '.date("d/m/y") .' at '.date("g:i a").'. New float balance: Ksh 98896.00.',
+          'message' => $message[$key],
         ),
     );
 
