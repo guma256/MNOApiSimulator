@@ -10,19 +10,60 @@ class Airtel_Model extends Model {
 
 
 
-	function ProcessMerchant($version,$payments,$reference=false){
+	function ProcessMerchant($version,$payments,$request,$reference){
          if($reference!=false){
 
          }else{
 
-     $response = $this->ProcessDebit();
+     $response = $this->ProcessDebit($request);
          }
 	}
 
 
 
 
-	function ProcessDebit($reference){
+	function ProcessDebit($request){
+  
+    $statuses=array("0"=>"TS","1"=>"TF","2"=>"TA","3"=>"TIP");
+    $message=array("0"=>"Your Request is submitted Successfully","1"=>"Transaction failed","2"=>"Ambiguous transaction","3"=>"Transaction in Progress");
+    $key = array_rand($statuses,1);
+    $req_data = json_decode($data,true);
+    $transaction_id = mt_rand(1, 100000);
+    //print_r($data);die();
+        if($statuses[$key]=='TS'){
+          $airtel_money_id = 'disburs-'.$this->generateRandomString().'-'.$req_data['transaction']['id'];
+        }else if ($statuses[$key]=='TA'){
+          $transaction_id = 'null';
+          $airtel_money_id = 'null';
+        }else if($statuses[$key]=='TIP'){
+          $transaction_id = 'null';
+          $airtel_money_id = 'null';
+        }else{
+
+        }
+    $response = array (
+        'data' => 
+        array (
+          'transaction' => 
+          array (
+            'reference_id' =>  $transaction_id,
+            'airtel_money_id' => $airtel_money_id,
+            'id' => $req_data['transaction']['id'],
+            'status' => $statuses[$key],
+          ),
+        ),
+        'status' => 
+        array (
+          'response_code' => 'DP00900001001',
+          'code' => '200',
+          'success' => true,
+          'result_code' => 'ESB000010',
+          'message' => $message[$key],
+        ),
+    );
+
+
+    echo json_encode($response);
 
 	}
 

@@ -21,10 +21,19 @@ class Airtel extends Controller {
 // /standard/v1/payments/BL-
 
     public function merchant($version,$payments,$reference=false) {
-
-      $this->model->ProcessMerchant($version,$payments,$reference); 
+            $request = file_get_contents('php://input');
+            if (empty($request)) {
+    
+                    $response=array();
+                    $response['status'] = 'Failed';
+                    $response['message'] = 'System failed to interprete Request Received';
+                    header('Content-Type: application/json;charset=utf-8');
+                    echo json_encode($response);
+                }else{
+      $this->model->ProcessMerchant($version,$payments,$request,$reference); 
+                }
     }
-
+  
    // /standard/v1/disbursements/
     public function standard($version,$disbursement,$transaction_id=false) {
          if($transaction_id==false){
@@ -33,7 +42,6 @@ class Airtel extends Controller {
 
             	$response=array();
     			$response['status'] = 'Failed';
-                $response['payment_ref'] = '';
                 $response['message'] = 'System failed to interprete Request Received';
                 header('Content-Type: application/json;charset=utf-8');
                 echo json_encode($response);
