@@ -141,7 +141,8 @@ class Airtel_Model extends Model {
 
   function ProcessWithdrawTransaction($data){
     
-    $statuses=array("0"=>"TS","1"=>"TF","2"=>"TA","3"=>"TIP");
+    //$statuses=array("0"=>"TS","1"=>"TF","2"=>"TA","3"=>"TIP");
+    $statuses=array("0"=>"TS");
     $message=array("0"=>"Your Request is submitted Successfully","1"=>"Transaction failed","2"=>"Ambiguous transaction","3"=>"Transaction in Progress");
     $key = array_rand($statuses,1);
     $req_data = json_decode($data,true);
